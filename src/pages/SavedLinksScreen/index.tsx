@@ -251,7 +251,7 @@ export default function SavedLinksScreen() {
       />
 
       <Section>
-        <NumberOfLinks>Links: {shortenedUrls?.length}</NumberOfLinks>
+        <NumberOfLinks>Links: {filterLinks()?.length}</NumberOfLinks>
         <Filters onPress={() => setIsDropdownVisible(!isDropdownVisible)}>
           <Feather name='filter' size={22} color='white' />
         </Filters>

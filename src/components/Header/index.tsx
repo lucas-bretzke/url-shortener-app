@@ -41,6 +41,8 @@ export default function Header({
   const inputRef = useRef<TextInput | null>(null)
 
   function setInputVisibility() {
+    onInputChange('')
+
     if (canChangeTheInputState) {
       setIsTitleVisible(!isTitleVisible)
       setIsInputVisible(!isInputVisible)

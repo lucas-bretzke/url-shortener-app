@@ -71,26 +71,28 @@ export default function CreateNewLinkScreen() {
   }
 
   async function checkFieldsBeforeRequest() {
-    setIsLoading(true)
     Keyboard.dismiss()
 
     if (!urlValidator(originalURL)) {
-      setErrorMessage('Ops! URL inválida')
-      return setIsLoading(false)
+      return setErrorMessage('Ops! URL inválida')
+    }
+
+    if (!description) {
+      return setErrorMessage('Adicione uma descrição')
     }
 
     if (!customUrlIsValid()) {
-      setErrorMessage(
-        'Customizar a URL é opcional e requer no mínimo 6 letras, sem espaços.'
+      return setErrorMessage(
+        'Customizar a URL requer no mínimo 6 letras, sem espaços em branco.'
       )
-      return setIsLoading(false)
     }
 
     await generateShortURL()
-    setIsLoading(false)
   }
 
   async function generateShortURL() {
+    setIsLoading(true)
+
     try {
       const code = customUrl ? customUrl : generateRandomString(6)
 
@@ -106,6 +108,8 @@ export default function CreateNewLinkScreen() {
     } catch (error) {
       console.log('post error:', error)
       setErrorMessage('Ops! Erro interno, volte mais tarde')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -142,7 +146,7 @@ export default function CreateNewLinkScreen() {
           label='Customizar URL (opicional)'
           value={customUrl}
           onChangeText={text => setCustomUrl(text)}
-          placeholder='bretz.exemplo/Sua-customização-aqui'
+          placeholder='ex.com/Sua-customização-vai-aqui'
           msgError={errorMessage}
         />
 

@@ -1,14 +1,14 @@
+import React, { useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // Screens.
 import Login from '../pages/Login'
 import Welcome from '../pages/Welcome'
 import AuthWrapper from './AuthWrapper'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useEffect } from 'react'
 import CreateAccount from '../pages/CreateAccount'
 import SavedLinksScreen from '../pages/SavedLinksScreen'
 import CreateNewLinkScreen from '../pages/CreateNewLinkScreen'
@@ -23,7 +23,7 @@ function LogoutScreen() {
     const logout = async () => {
       try {
         await AsyncStorage.removeItem('userData')
-        navigation.navigate('Login' as keyof typeof StackNavigation)
+        navigation.navigate('Welcome' as keyof typeof StackNavigation)
       } catch (error) {
         console.log('Erro ao remover os dados do usuário: ', error)
       }

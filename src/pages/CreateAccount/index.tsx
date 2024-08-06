@@ -1,7 +1,7 @@
 import { Alert, Keyboard, View } from 'react-native'
 import { BackHandler } from 'react-native'
 import * as Animatable from 'react-native-animatable'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useCallback } from 'react'
 
 /**
  * Services.
@@ -16,7 +16,7 @@ import { validatePassword, validateTheEmail } from '../../utils/form'
 /**
  * Components.
  */
-import Buttom from '../../components/Form/Buttom'
+import Button from '../../components/Form/Buttom'
 import InputText from '../../components/Form/InputText'
 import InputPassword from '../../components/Form/InputPassword'
 
@@ -28,7 +28,7 @@ import styles, { Container, Spinner, Title } from './styles'
 /**
  * Contexts.
  */
-import { AuthContext } from '.././../contexts/auth'
+import { AuthContext } from '../../contexts/auth'
 
 /**
  * Component.
@@ -43,25 +43,25 @@ export default function CreateAccount() {
   const [msgError, setMsgError] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
-  const validateForm = async () => {
+  const validateForm = useCallback(async () => {
     if (!name) {
       setMsgError('Preencha o nome')
       return false
     }
 
     if (!validateTheEmail(email)) {
-      setMsgError('email inválido')
+      setMsgError('Email inválido')
       return false
     }
 
     if (password.length < 6) {
-      setMsgError('A senha deve conter no minimo 6 caracteres')
+      setMsgError('A senha deve conter no mínimo 6 caracteres')
       return false
     }
 
     if (!validatePassword(password)) {
       setMsgError(
-        `A senha deve conter no mínimo um caractere especial, um número e uma letra maiúscula.`
+        'A senha deve conter no mínimo um caractere especial, um número e uma letra maiúscula.'
       )
       return false
     }
@@ -71,52 +71,53 @@ export default function CreateAccount() {
       return false
     }
 
-    const emailExists = await api.checkIfTheEmailIsAlreadyRegistered(email)
-    if (emailExists?.status === 200) {
-      setMsgError('Este email já está cadastrado')
+    try {
+      const emailExists = await api.checkIfTheEmailIsAlreadyRegistered(email)
+      if (emailExists?.status === 200) {
+        setMsgError('Este email já está cadastrado')
+        return false
+      }
+    } catch (error) {
+      setMsgError('Erro interno')
       return false
     }
 
     setMsgError('')
     return true
-  }
+  }, [name, email, password, confirmPassword])
 
-  async function login() {
-    setLoading(true)
-
+  const login = useCallback(async () => {
     try {
       await singIn(email, password)
-    } catch (error) {
-      setMsgError('Email ou senha incorretos.')
-    } finally {
       clearState()
-      setLoading(false)
+    } catch (error) {
+      setMsgError('Erro, feche o app e abra novamente')
     }
-  }
+  }, [email, password, singIn])
 
-  async function createAccount() {
+  const createAccount = useCallback(async () => {
     setLoading(true)
     Keyboard.dismiss()
 
     try {
       if (await validateForm()) {
         await api.createUser(name, email, password)
-        login()
+        await login()
       }
     } catch (error) {
-      setMsgError('Erro interno, volte mais tarde')
+      setMsgError('Erro, tente novamente mais tarde')
     } finally {
       setLoading(false)
     }
-  }
+  }, [validateForm, login, name, email, password])
 
-  function clearState() {
+  const clearState = useCallback(() => {
     setName('')
     setEmail('')
     setMsgError('')
     setPassword('')
     setConfirmPassword('')
-  }
+  }, [])
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -141,31 +142,35 @@ export default function CreateAccount() {
               label='Nome'
               icon='account'
               placeholder='Nome'
-              onChangeText={text => setName(text)}
+              onChangeText={setName}
             />
 
             <InputText
               value={email}
               label='E-mail'
               icon='email'
-              placeholder='example@gmail.comn'
-              onChangeText={text => setEmail(text)}
+              placeholder='example@gmail.com'
+              onChangeText={setEmail}
             />
+
             <InputPassword
+              label='Senha'
               value={password}
-              onChangeText={text => setPassword(text)}
+              onChangeText={setPassword}
             />
+
             <InputPassword
+              label='Confirmar Senha'
               placeholder='Confirmar senha'
               value={confirmPassword}
-              onChangeText={text => setConfirmPassword(text)}
+              onChangeText={setConfirmPassword}
               msgError={msgError}
             />
 
-            <Buttom
-              title={'Confirmar'}
-              onPress={() => createAccount()}
-              disabled={false}
+            <Button
+              title='Confirmar'
+              onPress={createAccount}
+              disabled={loading}
               style={{ marginTop: 20 }}
             />
           </View>

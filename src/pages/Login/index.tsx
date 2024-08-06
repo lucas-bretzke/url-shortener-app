@@ -59,7 +59,7 @@ export default function Login() {
 
       if (user) clearState()
     } catch (error) {
-      setMsgError('Email ou senha incorretos.')
+      setMsgError('E-mail e/ou senha inválidos')
     } finally {
       setLoading(false)
     }
