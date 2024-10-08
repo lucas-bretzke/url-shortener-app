@@ -1,5 +1,4 @@
 import React from 'react'
-import { Feather } from '@expo/vector-icons'
 import { SafeAreaView, ViewStyle } from 'react-native'
 
 /**
@@ -10,8 +9,8 @@ import {
   Label,
   Error,
   LeftIcon,
-  ButtomIcon,
-  RighttIcon,
+  ButtonIcon,
+  RightIcon,
   ContainerInputPassword
 } from './styles'
 
@@ -19,12 +18,12 @@ import {
  * Types.
  */
 type TextInputProps = {
-  value: string | void
+  value?: string 
   icon?: string
   label?: string
   style?: ViewStyle
   onPress?: () => void
-  inputRef?: any
+  inputRef?: React.Ref<any>
   leftIcon?: string
   msgError?: string
   placeholder?: string
@@ -35,18 +34,19 @@ type TextInputProps = {
 /**
  * Component.
  */
-export default function TextInput({
+const TextInput: React.FC<TextInputProps> = ({
   icon,
   style,
   value = '',
-  label = '',
+  label,
   leftIcon,
   inputRef,
-  onPress = () => {},
-  msgError = '',
-  placeholder = '',
-  onChangeText = text => {}
-}: TextInputProps) {
+  onPress,
+  msgError,
+  placeholder,
+  onChangeText,
+  secureTextEntry = false
+}) => {
   return (
     <SafeAreaView>
       {label && <Label>{label}</Label>}
@@ -59,13 +59,20 @@ export default function TextInput({
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          style={{ ...style }}
+          secureTextEntry={secureTextEntry}
+          style={style}
+          accessible
+          accessibilityLabel={placeholder || label} // Melhorar a acessibilidade
         />
 
         {icon && (
-          <ButtomIcon onPress={onPress}>
-            <RighttIcon name={icon} style={!value && { opacity: 0.5 }} />
-          </ButtomIcon>
+          <ButtonIcon
+            onPress={onPress}
+            accessible
+            accessibilityLabel='Show or hide input'
+          >
+            <RightIcon name={icon} style={!value ? { opacity: 0.5 } : {}} />
+          </ButtonIcon>
         )}
       </ContainerInputPassword>
 
@@ -73,3 +80,5 @@ export default function TextInput({
     </SafeAreaView>
   )
 }
+
+export default TextInput

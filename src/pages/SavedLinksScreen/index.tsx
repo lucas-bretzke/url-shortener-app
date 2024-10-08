@@ -270,7 +270,7 @@ export default function SavedLinksScreen() {
         leftIcon='menu'
         rightIcon='magnify'
         inputValue={search}
-        leftButtom={openDrawer}
+        leftButton={openDrawer}
         onInputChange={handleSearchInputChange}
         canChangeTheInputState
       />

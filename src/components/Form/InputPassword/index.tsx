@@ -9,7 +9,7 @@ import {
   Input,
   Error,
   Label,
-  EyeButtom,
+  EyeButton,
   ContainerInputPassword
 } from './styles'
 
@@ -20,32 +20,31 @@ type PasswordProps = {
   value: string
   label?: string
   style?: ViewStyle
-  onPress?: () => void
   msgError?: string
   placeholder?: string
   onChangeText: (text: string) => void
-  secureTextEntry?: boolean
   onSubmitEditing?: () => void
 }
 
 /**
  * Component.
  */
-export default function InputPassword({
+const InputPassword: React.FC<PasswordProps> = ({
   style,
-  label = '',
-  value = '',
+  label = 'Senha',
+  value,
   msgError = '',
   placeholder = '******',
-  onChangeText = text => {},
-  onSubmitEditing = () => {}
-}: PasswordProps) {
+  onChangeText,
+  onSubmitEditing
+}) => {
   const [passwordVisibility, setPasswordVisibility] = useState(false)
 
-  const visiblePassword = () => setPasswordVisibility(!passwordVisibility)
+  const togglePasswordVisibility = () => setPasswordVisibility(prev => !prev)
+
   return (
     <SafeAreaView>
-      <Label>{label || 'Senha'}</Label>
+      <Label>{label}</Label>
 
       <ContainerInputPassword>
         <Input
@@ -55,14 +54,21 @@ export default function InputPassword({
           secureTextEntry={!passwordVisibility}
           placeholder={placeholder}
           placeholderTextColor={'#ccc'}
-          style={{ ...style }}
+          style={style}
+          accessible
+          accessibilityLabel={`${label} input`} // Melhora a acessibilidade
         />
-        <EyeButtom active={passwordVisibility} onPress={visiblePassword}>
+        <EyeButton
+          active={passwordVisibility}
+          onPress={togglePasswordVisibility}
+        >
           <Feather name={passwordVisibility ? 'eye' : 'eye-off'} size={24} />
-        </EyeButtom>
+        </EyeButton>
       </ContainerInputPassword>
 
-      <Error>{msgError}</Error>
+      {msgError && <Error>{msgError}</Error>}
     </SafeAreaView>
   )
 }
+
+export default InputPassword

@@ -1,15 +1,18 @@
-const urlValidator = (url: string) => {
+const urlValidator = (url: string): boolean => {
   const regex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i
   return regex.test(url)
 }
 
-function generateRandomString(length: number) {
-  let newChart = ''
-  const chart = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+const generateRandomString = (length: number): string => {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let result = ''
+
   for (let i = 0; i < length; i++) {
-    newChart += chart.charAt(Math.floor(Math.random() * chart.length))
+    // Escolhe um caractere aleatório da string `chars`
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
-  return newChart
+
+  return result
 }
 
 export { urlValidator, generateRandomString }

@@ -2,6 +2,9 @@ import React from 'react'
 import { ViewStyle } from 'react-native'
 import { StyledButton, Text } from './styles'
 
+/**
+ * Types.
+ */
 type TypeProps = {
   title: string
   width?: number | string
@@ -12,6 +15,10 @@ type TypeProps = {
   disabled?: boolean
 }
 
+
+/**
+ * Component.
+ */
 export default function Button({
   title,
   style,
