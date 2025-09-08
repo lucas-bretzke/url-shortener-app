@@ -1,0 +1,7 @@
+Arquivos refatorados:
+
+Component Header
+Component Button
+Component InputPassword
+Component InputText
+Component Modal

@@ -5,7 +5,7 @@ import React, { useRef, useState } from 'react'
 /**
  * Styles.
  */
-import { Container, LeftButtom, RightButtom, StyledIcon, Title } from './styles'
+import { Container, LeftButton, RightButton, StyledIcon, Title } from './styles'
 
 /**
  * Types.
@@ -15,12 +15,13 @@ type IHeader = {
   leftIcon?: string
   rightIcon?: string
   inputValue?: string
-  leftButtom?: () => void
-  rightButtom?: () => void
+  leftButton?: () => void
+  rightButton?: () => void
   placeholder?: string
   onInputChange: any
   canChangeTheInputState?: boolean
 }
+
 /**
  * Component.
  */
@@ -28,33 +29,26 @@ export default function Header({
   title,
   leftIcon,
   rightIcon,
-  inputValue,
-  leftButtom,
+  inputValue = '',
+  leftButton,
   placeholder,
-  rightButtom,
+  rightButton,
   onInputChange,
-  canChangeTheInputState
+  canChangeTheInputState = false
 }: IHeader) {
   const [isInputVisible, setIsInputVisible] = useState(false)
-  const [isTitleVisible, setIsTitleVisible] = useState(true)
-
   const inputRef = useRef<TextInput | null>(null)
 
-  function setInputVisibility() {
+  const toggleInputVisibility = () => {
     onInputChange('')
 
     if (canChangeTheInputState) {
-      setIsTitleVisible(!isTitleVisible)
-      setIsInputVisible(!isInputVisible)
+      setIsInputVisible(prev => !prev)
     }
 
     setTimeout(() => {
       if (inputRef.current) {
-        if (isInputVisible) {
-          inputRef.current.blur()
-        } else {
-          inputRef.current.focus()
-        }
+        isInputVisible ? inputRef.current.blur() : inputRef.current.focus()
       }
     }, 100)
   }
@@ -62,17 +56,18 @@ export default function Header({
   return (
     <Container>
       {leftIcon && (
-        <LeftButtom onPress={leftButtom}>
+        <LeftButton onPress={leftButton}>
           <StyledIcon name={leftIcon} />
-        </LeftButtom>
+        </LeftButton>
       )}
-      {title && isTitleVisible && <Title>{title}</Title>}
+
+      {title && !isInputVisible && <Title>{title}</Title>}
 
       {isInputVisible && (
         <InputText
           inputRef={inputRef}
           value={inputValue}
-          onChangeText={text => onInputChange(text)}
+          onChangeText={onInputChange}
           leftIcon='magnify'
           style={{ width: 300, borderWidth: 0 }}
           placeholder={placeholder}
@@ -80,9 +75,9 @@ export default function Header({
       )}
 
       {rightIcon && (
-        <RightButtom onPress={rightButtom || setInputVisibility}>
+        <RightButton onPress={rightButton || toggleInputVisibility}>
           <StyledIcon name={isInputVisible ? 'close' : rightIcon} />
-        </RightButtom>
+        </RightButton>
       )}
     </Container>
   )

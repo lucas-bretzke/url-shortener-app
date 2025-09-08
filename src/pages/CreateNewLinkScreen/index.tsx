@@ -22,7 +22,7 @@ import { AuthContext } from '../../contexts/auth'
 /**
  * Components.
  */
-import Button from '../../components/Form/Buttom'
+import Button from '../../components/Form/Button'
 import TextInput from '../../components/Form/InputText'
 
 /**

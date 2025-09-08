@@ -31,7 +31,7 @@ export const Input = styled.TextInput`
   elevation: 2;
   background-color: #fff;
 `
-export const EyeButtom = styled.TouchableOpacity<EyeButtonProps>`
+export const EyeButton = styled.TouchableOpacity<EyeButtonProps>`
   position: absolute;
   top: 8px;
   right: 10px;

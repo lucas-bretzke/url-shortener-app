@@ -22,13 +22,13 @@ export const StyledIcon = styled(Icon)<Props>`
   color: #192436;
 `
 
-export const LeftButtom = styled.TouchableOpacity`
+export const LeftButton = styled.TouchableOpacity`
   position: absolute;
   left: 3%;
   padding: 0;
   margin: 0;
 `
-export const RightButtom = styled.TouchableOpacity`
+export const RightButton = styled.TouchableOpacity`
   position: absolute;
   right: 3%;
   padding: 0;

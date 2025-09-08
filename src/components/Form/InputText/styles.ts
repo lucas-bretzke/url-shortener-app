@@ -33,7 +33,7 @@ export const Input = styled.TextInput`
   background-color: #fff;
 `
 
-export const ButtomIcon = styled.TouchableOpacity`
+export const ButtonIcon = styled.TouchableOpacity`
   top: 8px;
   right: 10px;
   width: 30px;
@@ -52,7 +52,7 @@ export const LeftIcon = styled(Icon)<Props>`
   position: absolute;
   z-index: 1;
 `
-export const RighttIcon = styled(Icon)<Props>`
+export const RightIcon = styled(Icon)<Props>`
   font-size: 24px;
 `
 

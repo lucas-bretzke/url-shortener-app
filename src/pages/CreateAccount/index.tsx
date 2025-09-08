@@ -1,6 +1,5 @@
-import { Alert, Keyboard, View } from 'react-native'
-import { BackHandler } from 'react-native'
 import * as Animatable from 'react-native-animatable'
+import { Keyboard, View, BackHandler } from 'react-native'
 import React, { useContext, useEffect, useState, useCallback } from 'react'
 
 /**
@@ -11,12 +10,12 @@ import api from '../../services/api'
 /**
  * Utils.
  */
-import { validatePassword, validateTheEmail } from '../../utils/form'
+import { validatePassword, validateEmail } from '../../utils/form'
 
 /**
  * Components.
  */
-import Button from '../../components/Form/Buttom'
+import Button from '../../components/Form/Button'
 import InputText from '../../components/Form/InputText'
 import InputPassword from '../../components/Form/InputPassword'
 
@@ -34,7 +33,7 @@ import { AuthContext } from '../../contexts/auth'
  * Component.
  */
 export default function CreateAccount() {
-  const { signIn }: any = useContext(AuthContext)
+  const { signIn } = useContext(AuthContext)
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -44,54 +43,50 @@ export default function CreateAccount() {
   const [confirmPassword, setConfirmPassword] = useState('')
 
   const validateForm = useCallback(async () => {
-    if (!name) {
-      setMsgError('Preencha o nome')
-      return false
-    }
+    if (!name) return showError('Preencha o nome')
 
-    if (!validateTheEmail(email)) {
-      setMsgError('Email inválido')
-      return false
-    }
+    if (!validateEmail(email)) return showError('Email inválido')
 
-    if (password.length < 6) {
-      setMsgError('A senha deve conter no mínimo 6 caracteres')
-      return false
-    }
+    if (password.length < 6)
+      return showError('A senha deve conter no mínimo 6 caracteres')
 
-    if (!validatePassword(password)) {
-      setMsgError(
-        'A senha deve conter no mínimo um caractere especial, um número e uma letra maiúscula.'
+    if (!validatePassword(password))
+      return showError(
+        'A senha deve conter um caractere especial, um número e uma letra maiúscula.'
       )
-      return false
-    }
 
-    if (password !== confirmPassword) {
-      setMsgError('Os campos de senha devem ser iguais')
-      return false
-    }
+    if (password !== confirmPassword)
+      return showError('Os campos de senha devem ser iguais')
 
-    try {
-      const emailExists = await api.checkIfEmailExists(email)
-      if (emailExists?.status === 200) {
-        setMsgError('Este email já está cadastrado')
-        return false
-      }
-    } catch (error) {
-      setMsgError('Erro interno')
-      return false
-    }
+    const emailExists = await checkEmailExists(email)
+
+    if (emailExists) return showError('Este email já está cadastrado')
 
     setMsgError('')
     return true
   }, [name, email, password, confirmPassword])
 
+  const showError = (message: string) => {
+    setMsgError(message)
+    return false
+  }
+
+  const checkEmailExists = async (email: string) => {
+    try {
+      const response = await api.checkIfEmailExists(email)
+      return response?.status === 200
+    } catch {
+      showError('Erro interno')
+      return true
+    }
+  }
+
   const login = useCallback(async () => {
     try {
       await signIn(email, password)
       clearState()
-    } catch (error) {
-      setMsgError('Erro, feche o app e abra novamente')
+    } catch {
+      showError('Erro, feche o app e abra novamente')
     }
   }, [email, password, signIn])
 
@@ -100,12 +95,13 @@ export default function CreateAccount() {
     Keyboard.dismiss()
 
     try {
-      if (!validateForm()) return
+      const isValid = await validateForm()
+      if (!isValid) return
 
       await api.createUser(name, email, password)
       await login()
-    } catch (error) {
-      setMsgError('Erro, tente novamente mais tarde')
+    } catch {
+      showError('Erro, tente novamente mais tarde')
     } finally {
       setLoading(false)
     }
@@ -122,11 +118,8 @@ export default function CreateAccount() {
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      () => {
-        return loading ? true : false
-      }
+      () => loading
     )
-
     return () => backHandler.remove()
   }, [loading])
 
@@ -135,7 +128,6 @@ export default function CreateAccount() {
       <Container>
         <Animatable.View delay={1000} animation='fadeInUp'>
           <Title style={styles.containerHeader}>Crie sua conta</Title>
-
           <View style={styles.containerForm}>
             <InputText
               value={name}
@@ -144,7 +136,6 @@ export default function CreateAccount() {
               placeholder='Nome'
               onChangeText={setName}
             />
-
             <InputText
               value={email}
               label='E-mail'
@@ -152,13 +143,11 @@ export default function CreateAccount() {
               placeholder='example@gmail.com'
               onChangeText={setEmail}
             />
-
             <InputPassword
               label='Senha'
               value={password}
               onChangeText={setPassword}
             />
-
             <InputPassword
               label='Confirmar Senha'
               placeholder='Confirmar senha'
@@ -166,7 +155,6 @@ export default function CreateAccount() {
               onChangeText={setConfirmPassword}
               msgError={msgError}
             />
-
             <Button
               title='Confirmar'
               onPress={createAccount}

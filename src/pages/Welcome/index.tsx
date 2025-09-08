@@ -17,7 +17,7 @@ import styles, {
 /**
  * Components.
  */
-import Button from '../../components/Form/Buttom'
+import Button from '../../components/Form/Button'
 
 /**
  * Types.
